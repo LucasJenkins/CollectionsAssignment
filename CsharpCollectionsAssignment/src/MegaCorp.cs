@@ -72,7 +72,11 @@ namespace CsharpCollectionsAssignment
             HashSet<ICapitalist> Capitalists = new HashSet<ICapitalist>();
             foreach (ICapitalist i in MasterList)
             {
-                Capitalists.Add(i);
+                if (i != null)
+                {
+                    Capitalists.Add(i);
+                }
+                
             }
             return Capitalists;
         }
@@ -84,7 +88,9 @@ namespace CsharpCollectionsAssignment
         public ISet<FatCat> GetParents()
         {
             HashSet<FatCat> Capitalists = new HashSet<FatCat>();
-            IEnumerable<FatCat> query = from item in GetElements() where item.HasParent() select item.GetParent();
+            IEnumerable<FatCat> query = from item in GetElements()
+                                        where (item.HasParent())||(item is FatCat&&item.GetParent() == null)
+                                        select item.GetParent();
             foreach (FatCat i in query)
             {
                 Capitalists.Add(i);
@@ -100,13 +106,11 @@ namespace CsharpCollectionsAssignment
          */
         public ISet<ICapitalist> GetChildren(FatCat parent)
         {
-            if (parent.Equals(null))
-            {
-                throw new ArgumentException("Object cannot be null");
-            }
             HashSet<ICapitalist> Capitalists = new HashSet<ICapitalist>();
-            IEnumerable<FatCat> query = from item in GetElements() where item.HasParent()&&item.GetParent().Equals(parent) select (FatCat)item;
-            foreach (FatCat i in query)
+            IEnumerable<ICapitalist> query = from item in GetElements()
+                                            where item.HasParent() && item.GetParent().Equals(parent)
+                                            select item;
+            foreach (ICapitalist i in query)
             {
                 Capitalists.Add(i);
             }
@@ -122,7 +126,10 @@ namespace CsharpCollectionsAssignment
         public IDictionary<FatCat, ISet<ICapitalist>> GetHierarchy()
         {
             Dictionary<FatCat, ISet<ICapitalist>> Hierarchy = new Dictionary<FatCat, ISet<ICapitalist>>();
-            IEnumerable<FatCat> Parents = GetParents().Where<FatCat>(x => x.GetParent() == null);
+            IEnumerable<FatCat> Parents = from item in GetParents()
+                                          where item.GetParent() == null
+                                          select item;
+                                          
             foreach(var p in Parents)
             {
                  Hierarchy.Add(p, GetChildren(p));
@@ -149,15 +156,13 @@ namespace CsharpCollectionsAssignment
                 parent = element.GetParent();
                 Console.WriteLine($"Parent named:\t{element.GetName()}");
             }*/
-            while (element.HasParent())
+            while (element.HasParent() && element.GetParent().Equals(null))
             {
                 ParentChain.Add((FatCat)element);
-                Console.WriteLine($"Name:\t{element.GetName()}");
                 element = element.GetParent();
             }
-            ParentChain.Add((FatCat)element);
-            Console.WriteLine($"Name:\t{element.GetName()}");
-            //IEnumerable<FatCat> IParentChain =
+
+            //ParentChain.Add((FatCat)element);
             return ParentChain;
         }
     }
