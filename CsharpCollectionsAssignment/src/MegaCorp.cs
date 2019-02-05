@@ -11,8 +11,6 @@ namespace CsharpCollectionsAssignment
     public class MegaCorp : IHierarchy<ICapitalist, FatCat>
     {
         List<ICapitalist> MasterList = new List<ICapitalist>();
-
-        Stack Log { get; set; }
         /**
          * Adds a given element to the hierarchy.
          * <p>
@@ -76,8 +74,9 @@ namespace CsharpCollectionsAssignment
                 {
                     Capitalists.Add(i);
                 }
-                
+              
             }
+
             return Capitalists;
         }
 
@@ -95,6 +94,7 @@ namespace CsharpCollectionsAssignment
             {
                 Capitalists.Add(i);
             }
+
             return Capitalists;
         }
 
@@ -108,8 +108,8 @@ namespace CsharpCollectionsAssignment
         {
             HashSet<ICapitalist> Capitalists = new HashSet<ICapitalist>();
             IEnumerable<ICapitalist> query = from item in GetElements()
-                                            where item.HasParent() && item.GetParent().Equals(parent)
-                                            select item;
+                                             where item.HasParent() && item.GetParent().Equals(parent)
+                                             select item;
             foreach (ICapitalist i in query)
             {
                 Capitalists.Add(i);
@@ -127,9 +127,7 @@ namespace CsharpCollectionsAssignment
         {
             Dictionary<FatCat, ISet<ICapitalist>> Hierarchy = new Dictionary<FatCat, ISet<ICapitalist>>();
             IEnumerable<FatCat> Parents = from item in GetParents()
-                                          where item.GetParent() == null
-                                          select item;
-                                          
+                                          select item;                              
             foreach(var p in Parents)
             {
                  Hierarchy.Add(p, GetChildren(p));
@@ -147,22 +145,13 @@ namespace CsharpCollectionsAssignment
         public IList<FatCat> GetParentChain(ICapitalist element)
         {
             List<FatCat> ParentChain = new List<FatCat>();
-            //Console.WriteLine($"Child named:\t{element.GetName()}");
-            /*if(element.HasParent()){
-                ICapitalist parent = element.GetParent();
-                Console.WriteLine($"Parent named:\t{parent.GetName()}");
-                element = parent.GetParent();
-                Console.WriteLine($"Parent named:\t{element.GetName()}");
-                parent = element.GetParent();
-                Console.WriteLine($"Parent named:\t{element.GetName()}");
-            }*/
             while (element.HasParent() && element.GetParent().Equals(null))
             {
                 ParentChain.Add((FatCat)element);
                 element = element.GetParent();
             }
 
-            //ParentChain.Add((FatCat)element);
+            ParentChain.Add((FatCat)element);
             return ParentChain;
         }
     }
